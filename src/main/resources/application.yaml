@@ -42,4 +42,4 @@ spring:
         region:
           static: ${AWS_REGION}
     s3:
-      bucket: scp-api-media-storage
+      bucket: ${AWS_BUCKET:scp-api-media-storage}

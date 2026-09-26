@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Entity(name = "scps")
+@Entity
+@Table(name = "scps")
 public class Scp {
     @Id
     @Column(name = "uuid")

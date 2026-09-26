@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Entity(name = "user_departments")
+@Entity
+@Table(name = "user_departments")
 public class UserDepartment {
     @Id
     @Column(name = "uuid")

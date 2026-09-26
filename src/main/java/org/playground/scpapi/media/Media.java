@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Entity(name = "media")
+@Entity
+@Table(name = "media")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Media {

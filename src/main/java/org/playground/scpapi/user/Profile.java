@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Entity(name = "profiles")
+@Entity
+@Table(name = "profiles")
 public class Profile {
     @Id
     @Column(name = "uuid", nullable = false, length = 16)

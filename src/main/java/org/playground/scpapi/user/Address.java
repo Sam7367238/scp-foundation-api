@@ -8,7 +8,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@Entity(name = "addresses")
+@Entity
+@Table(name = "addresses")
 public class Address {
     @Id
     @Column(name = "uuid", nullable = false, length = 16)

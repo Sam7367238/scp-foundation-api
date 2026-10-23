@@ -3,9 +3,7 @@ package org.playground.scpapi.user;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -14,7 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @AllArgsConstructor
 class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
 
     @PostMapping
     public ResponseEntity<UserDto> registerUser(

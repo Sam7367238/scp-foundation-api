@@ -48,7 +48,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8081/realms/SCP%20Foundation/protocol/openid-connect/certs
+          jwk-set-uri: ${JWK_URI}
 
 logging:
   level:

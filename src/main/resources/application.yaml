@@ -43,3 +43,15 @@ spring:
           static: ${AWS_REGION}
     s3:
       bucket: ${AWS_BUCKET:scp-api-media-storage}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8081/realms/SCP%20Foundation/protocol/openid-connect/certs
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE

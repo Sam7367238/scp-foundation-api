@@ -3,7 +3,9 @@ package org.playground.scpapi.user;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+import java.time.LocalDateTime;
+
+@Mapper(componentModel = "spring", imports = LocalDateTime.class)
 public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "departments", ignore = true)

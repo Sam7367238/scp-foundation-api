@@ -31,12 +31,6 @@ public class GlobalExceptionHandler {
         return new ErrorDto(exception.getMessage());
     }
 
-    @ExceptionHandler(DuplicateUserException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorDto handleDuplicateUserException(DuplicateUserException exception) {
-        return new ErrorDto(exception.getMessage());
-    }
-
     @ExceptionHandler({ExpiredTokenException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorDto handleExpiredTokenException(RuntimeException exception) {

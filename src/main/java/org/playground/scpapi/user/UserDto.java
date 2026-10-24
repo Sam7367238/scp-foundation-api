@@ -1,12 +1,17 @@
 package org.playground.scpapi.user;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record UserDto(
-        UUID uuid,
-        String name,
-        String email,
-        byte clearanceLevel,
-        LocalDateTime created) {
+@Getter
+@Setter
+public class UserDto {
+    private UUID uuid;
+    private String name;
+    private String email;
+    private byte clearanceLevel;
+    private LocalDateTime created;
 }

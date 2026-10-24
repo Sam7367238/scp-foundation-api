@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.restclient.test.autoconfigure.AutoConfigureRestClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -32,32 +34,33 @@ public class KeycloakClient {
     private String clientSecret;
 
     private String getServiceToken() {
-        var form = new HashMap<>();
-        form.put("grant_type", "client_credentials");
-        form.put("client_id", clientId);
-        form.put("client_secret", clientSecret);
+        var form = new LinkedMultiValueMap<>();
+        form.add("grant_type", "client_credentials");
+        form.add("client_id", clientId);
+        form.add("client_secret", clientSecret);
 
-        var res = restClient.post()
+        var response = restClient.post()
                 .uri(baseUrl + "/realms/{realm}/protocol/openid-connect/token", realm)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(form)
                 .retrieve()
                 .body(Map.class);
 
-        assert res != null;
+        assert response != null;
 
-        return (String) res.get("access_token");
+        return (String) response.get("access_token");
     }
 
-    public void createUser(RegisterUserRequest request) {
+    public String createUser(RegisterUserRequest request, UUID profileId) {
         Map<String, Object> user = Map.of(
-                "name", request.name(),
                 "email", request.email(),
                 "username", request.email(),
                 "enabled", true,
                 "attributes", Map.of(
                         "clearanceLevel", request.clearanceLevel(),
-                        "name", request.name()
+                        "name", request.name(),
+                        "phoneNumber", request.phoneNumber(),
+                        "profileId", profileId.toString()
                 ),
                 "credentials", List.of(
                         Map.of(
@@ -67,12 +70,22 @@ public class KeycloakClient {
                 )
         );
 
-        restClient.post()
+        ResponseEntity<Void> response = restClient.post()
                 .uri(baseUrl + "/admin/realms/{realm}/users", realm)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + getServiceToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(user)
                 .retrieve()
                 .toBodilessEntity();
+
+        var location = response.getHeaders().getLocation();
+
+        if (location == null) {
+            throw new IllegalStateException("Keycloak did not return a Location header");
+        }
+
+        String path = location.getPath();
+
+        return path.substring(path.lastIndexOf('/') + 1);
     }
 }

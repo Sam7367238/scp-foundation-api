@@ -23,7 +23,7 @@ public record RegisterUserRequest(
         UUID department,
         
         @NotNull(message = "Please fill this in")
-        int buildingNumber,
+        String buildingNumber,
 
         @Length(min = 3, max = 100, message = "This must be between 3 and 100 characters")
         String district,
@@ -41,7 +41,7 @@ public record RegisterUserRequest(
         
         @NotNull(message = "Please fill this in")
         @Digits(integer = 5, fraction = 0, message = "This cannot be longer than 5 digits")
-        int postalCode,
+        String postalCode,
         
         @NotBlank(message = "Please fill this in")
         @Length(max = 5, message = "This cannot be longer than 5 characters")

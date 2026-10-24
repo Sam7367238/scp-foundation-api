@@ -1,6 +1,7 @@
 package org.playground.scpapi.user;
 
 import lombok.RequiredArgsConstructor;
+import org.playground.scpapi.authentication.KeycloakClient;
 import org.playground.scpapi.common.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
@@ -18,15 +19,12 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final EmailService emailService;
     private final RestorationTokenRepository restorationTokenRepository;
+    private final KeycloakClient keycloakClient;
 
     @Value("${spring.restoration-tokens.minutes}")
     private int restorationTokenMinutes;
 
     public UserDto createUser(RegisterUserRequest request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new DuplicateUserException();
-        }
-
         var user = userMapper.toEntity(request);
 
         Profile profile = new Profile();
@@ -34,9 +32,13 @@ public class UserService {
 
         profileRepository.save(profile);
 
-        userRepository.save(user);
+        var uuid = UUID.fromString(keycloakClient.createUser(request, profile.getUuid()));
 
-        return userMapper.toDto(user);
+        var dto = userMapper.toDto(user);
+
+        dto.setUuid(uuid);
+
+        return dto;
     }
 
     @Deprecated(since = "0.5.0", forRemoval = true)
@@ -52,6 +54,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Deprecated(since = "0.7.0")
     public void sendPasswordResetEmail(String email) {
         var user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
@@ -75,6 +78,7 @@ public class UserService {
         emailService.sendEmail(email, "Password Reset", uri);
     }
 
+    @Deprecated(since = "0.7.0")
     public void resetPasswordWithToken(UUID tokenId, String newPassword) {
         var token = restorationTokenRepository.findById(tokenId).orElseThrow(() -> new AccessDeniedException("The token is invalid"));
 

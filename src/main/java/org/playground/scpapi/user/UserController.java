@@ -13,6 +13,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/***
+ * {
+ *   "name": "string",
+ *   "email": "user@example.com",
+ *   "phoneNumber": "string",
+ *   "clearanceLevel": 3,
+ *   "department": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+ *   "buildingNumber": 0,
+ *   "district": "string",
+ *   "street": "string",
+ *   "city": "string",
+ *   "stateOrProvince": "string",
+ *   "postalCode": 0,
+ *   "country": "string",
+ *   "temporaryPassword": "string"
+ * }
+ */
+
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -26,7 +44,7 @@ class UserController {
             @Valid @RequestBody RegisterUserRequest request,
             UriComponentsBuilder uriBuilder
     ) {
-        var clearanceLevel = (int) jwt.getClaim("clearanceLevel");
+        var clearanceLevel = (Long) jwt.getClaim("clearanceLevel");
 
         if (clearanceLevel < 4) {
             throw new AccessDeniedException("You are not authorized to perform this action");
@@ -34,7 +52,7 @@ class UserController {
 
         var dto = userService.createUser(request);
 
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(dto.uuid()).toUri();
+        var uri = uriBuilder.path("/users/{id}").buildAndExpand(dto.getUuid()).toUri();
 
         return ResponseEntity.created(uri).body(dto);
     }

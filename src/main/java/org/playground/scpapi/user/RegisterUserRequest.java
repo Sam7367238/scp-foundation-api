@@ -45,6 +45,10 @@ public record RegisterUserRequest(
         
         @NotBlank(message = "Please fill this in")
         @Length(max = 5, message = "This cannot be longer than 5 characters")
-        String country
+        String country,
+
+        @NotBlank(message = "Please fill this in")
+        @Length(min = 8, max = 255, message = "This must be between 8 and 255 characters")
+        String temporaryPassword
 ) {
 }

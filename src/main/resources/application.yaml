@@ -48,7 +48,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${JWK_URI}
+          jwk-set-uri: ${AUTH_SERVER_JWK_URI}
+
+  # Client Credentials Grant Type
+  keycloak:
+    base-url: ${AUTH_SERVER_KEYCLOAK_URL}
+    realm: ${AUTH_SERVER_KEYCLOAK_REALM}
+    client-id: ${AUTH_SERVER_KEYCLOAK_CLIENT_ID}
+    client-secret: ${AUTH_SERVER_KEYCLOAK_CLIENT_SECRET}
 
 logging:
   level:

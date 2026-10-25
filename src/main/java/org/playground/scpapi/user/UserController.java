@@ -11,26 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
-
-/***
- * {
- *   "name": "string",
- *   "email": "user@example.com",
- *   "phoneNumber": "string",
- *   "clearanceLevel": 3,
- *   "department": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
- *   "buildingNumber": 0,
- *   "district": "string",
- *   "street": "string",
- *   "city": "string",
- *   "stateOrProvince": "string",
- *   "postalCode": 0,
- *   "country": "string",
- *   "temporaryPassword": "string"
- * }
- */
 
 @Slf4j
 @RestController

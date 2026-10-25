@@ -15,6 +15,7 @@ spring:
     port: ${EMAIL_PORT}
     username: ${EMAIL_USERNAME}
     password: ${EMAIL_PASSWORD}
+    from: foundation@demomailtrap.co
 
     properties:
       mail:
@@ -22,8 +23,10 @@ spring:
           auth: true
           starttls:
             enable: true
+
   restoration-tokens:
     minutes: 15
+
   media:
     allowedTypes:
       - image/png

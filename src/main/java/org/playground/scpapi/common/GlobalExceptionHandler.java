@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({ExpiredTokenException.class, AccessDeniedException.class})
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDto handleExpiredTokenException(RuntimeException exception) {
         return new ErrorDto(exception.getMessage());
     }

@@ -1,6 +1,7 @@
 package org.playground.scpapi.user;
 
 import jakarta.validation.Valid;
+import jakarta.ws.rs.WebApplicationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.playground.scpapi.common.ErrorDto;
@@ -57,13 +58,25 @@ class UserController {
         return ResponseEntity.created(uri).body(dto);
     }
 
-    @ExceptionHandler(RestClientResponseException.class)
-    public ResponseEntity<ErrorDto> handleConflictException(RestClientResponseException exception) {
-        if (exception.getStatusCode() == HttpStatus.CONFLICT) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDto("This email address is taken"));
-        }
+    @ExceptionHandler(WebApplicationException.class)
+    public ResponseEntity<ErrorDto> handleKeycloakError(WebApplicationException exception) {
+        int status = exception.getResponse().getStatus();
 
-        log.error(exception.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorDto("Something went wrong"));
+        return switch (status) {
+            case 409 -> ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorDto("This email address is taken"));
+
+            case 400 -> {
+                log.warn("Keycloak rejected the request (status {})", status, exception);
+                yield ResponseEntity.badRequest()
+                        .body(new ErrorDto("The user details were rejected. Check the values and try again."));
+            }
+
+            default -> {
+                log.error("Keycloak call failed (status {})", status, exception);
+                yield ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ErrorDto("Something went wrong"));
+            }
+        };
     }
 }

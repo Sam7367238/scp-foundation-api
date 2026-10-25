@@ -1,15 +1,13 @@
 package org.playground.scpapi.authentication;
 
 import lombok.RequiredArgsConstructor;
+import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.playground.scpapi.user.RegisterUserRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.restclient.test.autoconfigure.AutoConfigureRestClient;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.Map;
@@ -17,75 +15,34 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-@AutoConfigureRestClient
 public class KeycloakClient {
-    private final RestClient restClient = RestClient.create();
-
-    @Value("${spring.keycloak.base-url}")
-    private String baseUrl;
+    private final Keycloak keycloakClient;
 
     @Value("${spring.keycloak.realm}")
     private String realm;
 
-    @Value("${spring.keycloak.client-id}")
-    private String clientId;
-
-    @Value("${spring.keycloak.client-secret}")
-    private String clientSecret;
-
-    private String getServiceToken() {
-        var form = new LinkedMultiValueMap<>();
-        form.add("grant_type", "client_credentials");
-        form.add("client_id", clientId);
-        form.add("client_secret", clientSecret);
-
-        var response = restClient.post()
-                .uri(baseUrl + "/realms/{realm}/protocol/openid-connect/token", realm)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(form)
-                .retrieve()
-                .body(Map.class);
-
-        assert response != null;
-
-        return (String) response.get("access_token");
-    }
-
     public String createUser(RegisterUserRequest request, UUID profileId) {
-        Map<String, Object> user = Map.of(
-                "email", request.email(),
-                "username", request.email(),
-                "enabled", true,
-                "attributes", Map.of(
-                        "clearanceLevel", request.clearanceLevel(),
-                        "name", request.name(),
-                        "phoneNumber", request.phoneNumber(),
-                        "profileId", profileId.toString()
-                ),
-                "credentials", List.of(
-                        Map.of(
-                        "type", "password",
-                        "value", request.temporaryPassword(),
-                        "temporary", true)
-                )
-        );
+            var passwordCredentials = new CredentialRepresentation();
+            passwordCredentials.setType(CredentialRepresentation.PASSWORD);
+            passwordCredentials.setValue(request.temporaryPassword());
+            passwordCredentials.setTemporary(true);
 
-        ResponseEntity<Void> response = restClient.post()
-                .uri(baseUrl + "/admin/realms/{realm}/users", realm)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + getServiceToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(user)
-                .retrieve()
-                .toBodilessEntity();
+            var userRepresentation = new UserRepresentation();
+            userRepresentation.setEmail(request.email());
+            userRepresentation.setUsername(request.email());
 
-        var location = response.getHeaders().getLocation();
+            userRepresentation.setAttributes(Map.of(
+                    "clearanceLevel", List.of(Integer.toString(request.clearanceLevel())),
+                    "name", List.of(request.name()),
+                    "phoneNumber", List.of(request.phoneNumber()),
+                    "profileId", List.of(profileId.toString())
+            ));
 
-        if (location == null) {
-            throw new IllegalStateException("Keycloak did not return a Location header");
-        }
+            userRepresentation.setEnabled(true);
+            userRepresentation.setCredentials(List.of(passwordCredentials));
 
-        String path = location.getPath();
-
-        return path.substring(path.lastIndexOf('/') + 1);
+            try (var response = keycloakClient.realm(realm).users().create(userRepresentation)) {
+                return CreatedResponseUtil.getCreatedId(response);
+            }
     }
 }

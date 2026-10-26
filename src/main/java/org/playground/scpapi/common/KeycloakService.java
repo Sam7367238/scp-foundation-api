@@ -1,4 +1,4 @@
-package org.playground.scpapi.authentication;
+package org.playground.scpapi.common;
 
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.CreatedResponseUtil;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class KeycloakClient {
+public class KeycloakService {
     private final Keycloak keycloakClient;
 
     @Value("${spring.keycloak.realm}")

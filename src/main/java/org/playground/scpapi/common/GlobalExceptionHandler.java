@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
         return new ErrorDto(exception.getMessage());
     }
 
-    @ExceptionHandler({NonMatchingPasswordsException.class, InvalidMimeTypeException.class, EmptyFileException.class})
+    @ExceptionHandler({InvalidMimeTypeException.class, EmptyFileException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleNonMatchingPasswordsException(RuntimeException exception) {
         return new ErrorDto(exception.getMessage());

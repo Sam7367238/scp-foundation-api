@@ -1,4 +1,4 @@
-package org.playground.scpapi.authentication;
+package org.playground.scpapi.common;
 
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;

@@ -50,7 +50,7 @@ class UserController {
             case 400 -> {
                 log.warn("Keycloak rejected the request (status {})", status, exception);
                 yield ResponseEntity.badRequest()
-                        .body(new ErrorDto("The user details were rejected. Check the values and try again."));
+                        .body(new ErrorDto("The user details were rejected. Check the values and try again"));
             }
 
             default -> {

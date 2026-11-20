@@ -1,8 +1,7 @@
 package org.playground.scpapi.user;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.playground.scpapi.department.Department;
 import org.playground.scpapi.userDepartment.UserDepartment;
 
@@ -12,13 +11,14 @@ import java.util.Set;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
     @Column(name = "uuid")
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
     @Column(name = "name")
@@ -31,10 +31,10 @@ public class User {
     private String phoneNumber;
 
     @Column(name = "clearance_level")
-    private Byte clearanceLevel;
+    private byte clearanceLevel;
 
-    @Column(name = "password")
-    private String password;
+//    @Column(name = "password")
+//    private String password;
 
     @Column(name = "created")
     private LocalDateTime created;
@@ -45,7 +45,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Department> departments = new LinkedHashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.PERSIST, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     private Profile profile;
 

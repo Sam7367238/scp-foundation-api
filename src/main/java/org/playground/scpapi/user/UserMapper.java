@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring", imports = LocalDateTime.class)
 public interface UserMapper {
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "departments", ignore = true)
     @Mapping(target = "addresses", ignore = true)
     @Mapping(target = "userDepartments", ignore = true)

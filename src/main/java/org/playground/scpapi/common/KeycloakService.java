@@ -21,28 +21,32 @@ public class KeycloakService {
     @Value("${spring.keycloak.realm}")
     private String realm;
 
-    public String createUser(RegisterUserRequest request, UUID profileId) {
-            var passwordCredentials = new CredentialRepresentation();
-            passwordCredentials.setType(CredentialRepresentation.PASSWORD);
-            passwordCredentials.setValue(request.temporaryPassword());
-            passwordCredentials.setTemporary(true);
+    public String createKeycloakUser(RegisterUserRequest request, UUID profileId) {
+        var passwordCredentials = new CredentialRepresentation();
+        passwordCredentials.setType(CredentialRepresentation.PASSWORD);
+        passwordCredentials.setValue(request.temporaryPassword());
+        passwordCredentials.setTemporary(true);
 
-            var userRepresentation = new UserRepresentation();
-            userRepresentation.setEmail(request.email());
-            userRepresentation.setUsername(request.email());
+        var userRepresentation = new UserRepresentation();
+        userRepresentation.setEmail(request.email());
+        userRepresentation.setUsername(request.email());
 
-            userRepresentation.setAttributes(Map.of(
-                    "clearanceLevel", List.of(Integer.toString(request.clearanceLevel())),
-                    "name", List.of(request.name()),
-                    "phoneNumber", List.of(request.phoneNumber()),
-                    "profileId", List.of(profileId.toString())
-            ));
+        userRepresentation.setAttributes(Map.of(
+                "clearanceLevel", List.of(Integer.toString(request.clearanceLevel())),
+                "name", List.of(request.name()),
+                "phoneNumber", List.of(request.phoneNumber()),
+                "profileId", List.of(profileId.toString())
+        ));
 
-            userRepresentation.setEnabled(true);
-            userRepresentation.setCredentials(List.of(passwordCredentials));
+        userRepresentation.setEnabled(true);
+        userRepresentation.setCredentials(List.of(passwordCredentials));
 
-            try (var response = keycloakClient.realm(realm).users().create(userRepresentation)) {
-                return CreatedResponseUtil.getCreatedId(response);
-            }
+        try (var response = keycloakClient.realm(realm).users().create(userRepresentation)) {
+            return CreatedResponseUtil.getCreatedId(response);
+        }
+    }
+
+    public UserRepresentation getUser(UUID uuid) {
+        return keycloakClient.realm(realm).users().get(uuid.toString()).toRepresentation();
     }
 }

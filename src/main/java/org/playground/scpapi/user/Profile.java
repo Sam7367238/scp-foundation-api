@@ -13,8 +13,8 @@ import java.util.UUID;
 @Table(name = "profiles")
 public class Profile {
     @Id
-    @Column(name = "uuid", nullable = false, length = 16)
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "uuid")
+    // @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
 
     @ManyToOne

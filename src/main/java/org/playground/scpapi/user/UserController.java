@@ -9,9 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -37,6 +41,13 @@ class UserController {
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(dto.getUuid()).toUri();
 
         return ResponseEntity.created(uri).body(dto);
+    }
+
+    @GetMapping("/me")
+    public UserDto getMe(@AuthenticationPrincipal Jwt jwt) {
+        var uuid = UUID.fromString(jwt.getSubject());
+
+        return userService.getUser(uuid);
     }
 
     @ExceptionHandler(WebApplicationException.class)

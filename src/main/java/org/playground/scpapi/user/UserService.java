@@ -21,6 +21,8 @@ public class UserService {
 
     public UserDto createUser(RegisterUserRequest request) {
         var profile = new Profile();
+        profile.setUuid(UUID.randomUUID());
+
         profileRepository.save(profile);
 
         var uuidString = keycloakClient.createKeycloakUser(request, profile.getUuid());

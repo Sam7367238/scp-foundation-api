@@ -49,7 +49,7 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    private User syncUserFromKeycloak(UUID uuid) {
+    public User syncUserFromKeycloak(UUID uuid) {
         var keycloakUser = keycloakClient.getUser(uuid);
 
         var attributes = keycloakUser.getAttributes();

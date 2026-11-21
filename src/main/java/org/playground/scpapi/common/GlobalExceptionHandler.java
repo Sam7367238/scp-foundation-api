@@ -2,6 +2,7 @@ package org.playground.scpapi.common;
 
 import org.playground.scpapi.media.EmptyFileException;
 import org.playground.scpapi.media.InvalidMimeTypeException;
+import org.playground.scpapi.media.MediaNotFoundException;
 import org.playground.scpapi.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,9 +26,9 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler({UserNotFoundException.class, MediaNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDto handleUserNotFoundException(UserNotFoundException exception) {
+    public ErrorDto handleNotFoundExceptions(Exception exception) {
         return new ErrorDto(exception.getMessage());
     }
 

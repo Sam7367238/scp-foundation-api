@@ -3,6 +3,7 @@ package org.playground.scpapi.user;
 import jakarta.persistence.*;
 import lombok.*;
 import org.playground.scpapi.department.Department;
+import org.playground.scpapi.media.Media;
 import org.playground.scpapi.userDepartment.UserDepartment;
 
 import java.time.LocalDateTime;
@@ -51,4 +52,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<UserDepartment> userDepartments = new LinkedHashSet<>();
+
+    public void setProfilePicture(Media media) {
+        profile.setMedia(media);
+    }
 }

@@ -1,10 +1,7 @@
 package org.playground.scpapi.department;
 
 import jakarta.validation.Valid;
-import org.playground.scpapi.media.MediaNotFoundException;
-import org.playground.scpapi.media.MediaRepository;
-import org.playground.scpapi.user.UserRepository;
-import org.playground.scpapi.user.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,22 +16,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/departments")
+@AllArgsConstructor
 public class DepartmentController {
-    private final MediaRepository mediaRepository;
-    private final UserRepository userRepository;
-    private final UserService userService;
-    private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
     private final DepartmentService departmentService;
-
-    public DepartmentController(MediaRepository mediaRepository, UserRepository userRepository, UserService userService, DepartmentRepository departmentRepository, DepartmentMapper departmentMapper, DepartmentService departmentService) {
-        this.mediaRepository = mediaRepository;
-        this.userRepository = userRepository;
-        this.userService = userService;
-        this.departmentRepository = departmentRepository;
-        this.departmentMapper = departmentMapper;
-        this.departmentService = departmentService;
-    }
 
     @PostMapping
     public ResponseEntity<DepartmentDto> createDepartment(

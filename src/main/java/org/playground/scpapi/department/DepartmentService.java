@@ -5,8 +5,6 @@ import org.playground.scpapi.media.MediaNotFoundException;
 import org.playground.scpapi.media.MediaRepository;
 import org.playground.scpapi.user.UserRepository;
 import org.playground.scpapi.user.UserService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
